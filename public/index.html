@@ -54,7 +54,7 @@
           </ul>
 
           <!-- Buscar -->
-          <form class="d-flex" id="search_form">
+          <form class="d-flex col-sm-6" id="search_form">
             <input class="form-control me-2" type="search" placeholder="Nombre del producto..." aria-label="Search" id="input_search">
             <button class="btn btn-outline-success" id="btn_buscar">Buscar</button>
           </form>
@@ -65,15 +65,33 @@
   <div class="p-3">
     <main>
       <div class="container-fluid">
+        
         <h2>Inicio</h2>
         <hr>
         <!-- Contenedor de productos -->
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 g-4 align-items-end" id="products_container">
         </div>
+
+        <hr>
+
+        <!-- Cantidad de productos por pagina -->
+        <div class="d-flex mt-4 flex-row justify-content-end">
+          <p>Productos por página: </p>
+          <select class="form-select form-select-sm ms-2 py-0" style="width: 10vh; height: 28px;" id="select_cant_products">
+            <option selected value="6">6</option>
+            <option value="8">8</option>
+            <option value="12">12</option>
+          </select>
+        </div>
+        
+        <!-- Paginacion -->
+        <nav>
+          <ul class="pagination mt-1 justify-content-end" id="pagination"></ul>
+        </nav>
         
         <!-- Boton para subir al inicio de la pagina -->
-        <div class="d-flex justify-content-end">
-          <a href="#" class="btn btn-outline-dark mt-4 me-2 mb-4 mb-sm-1">Subir</a>
+        <div class="d-flex justify-content-end mt-5">
+          <a href="#" class="btn btn-outline-dark me-2 mb-sm-1">Subir</a>
         </div>
       </div>
     </main>
@@ -105,6 +123,11 @@
         </div>
       </div>
     </div>
+  </template>
+
+  <!-- Plantilla para el link de cada pagina -->
+  <template id="page_link_template">
+    <li class="page-item"><a class="page-link" link="X" href="#" onclick="buscarProductos(this.link)">X</a></li>
   </template>
 
   <script src="../src/api.js"></script>
