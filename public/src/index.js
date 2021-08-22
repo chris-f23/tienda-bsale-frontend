@@ -118,6 +118,7 @@ function renderizarProductos(productos) {
     let cardProducto = PLANTILLA_PRODUCTO.cloneNode(true).content;
 
     // Propiedades de un producto.
+
     let descuento = producto.discount;
     let precioVenta = (producto.price + 0).toFixed(2);
     let precioAnterior = (precioVenta / ((100 - descuento)/100)).toFixed(2);
@@ -131,8 +132,11 @@ function renderizarProductos(productos) {
     // Escribir propiedades del producto en el nuevo card.
     cardProducto.querySelector("[name='name']").innerHTML = producto.name;
     cardProducto.querySelector("[name='price']").innerHTML = "$ " + precioVenta;
-    cardProducto.querySelector("[name='discount']").innerHTML = descuento + "% de descuento";
-    cardProducto.querySelector("[name='prev_price']").innerHTML = "$ " + precioAnterior;
+
+    // Aplicar descuento solo si es distinto a 0.
+    cardProducto.querySelector("[name='discount']").innerHTML = (descuento > 0) ? descuento + "% de descuento" : " ";
+    cardProducto.querySelector("[name='prev_price']").innerHTML = (descuento > 0) ? "$ " + precioAnterior : " ";  
+
     cardProducto.querySelector("[name='url_image']").src = urlImagen;
 
     // Agregar card al contenedor.

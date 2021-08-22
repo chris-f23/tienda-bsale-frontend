@@ -1,7 +1,7 @@
 const URL_DESARROLLO = "http://localhost:5000/api"
 const URL_DESPLIEGUE = "https://chris-f23-bsale-backend.herokuapp.com/api"
 
-const urlBase = URL_DESARROLLO;
+const urlBase = URL_DESPLIEGUE;
 
 /**
  * Obtiene los productos desde el backend y retorna el objeto que contiene los productos y la cantidad de estos.
