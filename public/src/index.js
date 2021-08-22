@@ -157,7 +157,7 @@ function actualizarPaginacion(cantidadTotalProductos) {
     // Atajo a la primera pagina. Solo se crea si el link a la primera pagina no es visible.
     let linkPagina = PLANTILLA_LINK_PAGINACION.cloneNode(true).content;
     linkPagina.querySelector("a").innerHTML = `&laquo ${1}`;
-    linkPagina.querySelector("a").setAttribute('onclick', `actualizarEstado({ pagina: 1 })`)
+    linkPagina.querySelector("a").setAttribute('onclick', `actualizarEstado({ paginaActual: 1 })`)
     contenedorLinkPaginas.appendChild(linkPagina);
   }
   if (App.pagination.current_page > cantPaginas - 2) {
@@ -168,7 +168,7 @@ function actualizarPaginacion(cantidadTotalProductos) {
   for (let index = 1; index <= 5; index++) {
     let linkPagina = PLANTILLA_LINK_PAGINACION.cloneNode(true).content;
     linkPagina.querySelector("a").innerHTML = index + offsetInicio;
-    linkPagina.querySelector("a").setAttribute('onclick', `actualizarEstado({ pagina: ${index + offsetInicio} })`)
+    linkPagina.querySelector("a").setAttribute('onclick', `actualizarEstado({ paginaActual: ${index + offsetInicio} })`)
 
     // Si es la pagina actual, agregar clase 'active'.
     if (App.pagination.current_page === index + offsetInicio) {
@@ -182,7 +182,7 @@ function actualizarPaginacion(cantidadTotalProductos) {
   if (App.pagination.current_page < cantPaginas - 2) {
     let linkPagina = PLANTILLA_LINK_PAGINACION.cloneNode(true).content;
     linkPagina.querySelector("a").innerHTML = `${cantPaginas} &raquo`;
-    linkPagina.querySelector("a").setAttribute('onclick', `actualizarEstado({ pagina: ${cantPaginas})`)
+    linkPagina.querySelector("a").setAttribute('onclick', `actualizarEstado({ paginaActual: ${cantPaginas})`)
     contenedorLinkPaginas.appendChild(linkPagina);
   }
 }
