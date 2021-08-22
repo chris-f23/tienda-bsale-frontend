@@ -1,9 +1,12 @@
+const urlDesarrollo = "http://localhost:5000/api/products"
+const urlDespliegue = "https://chris-f23-bsale-backend.herokuapp.com/api/products"
+
 async function obtenerProductos({
   cantidad,
   pagina,
   busqueda
 }) {
-  let url = new URL('http://localhost:5000/api/products');
+  let url = new URL(urlDespliegue);
   let params = {};
 
   // Agregar parametros
