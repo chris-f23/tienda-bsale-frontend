@@ -117,16 +117,23 @@ function renderizarProductos(productos) {
   for (const producto of productos) {
     let cardProducto = PLANTILLA_PRODUCTO.cloneNode(true).content;
 
-    // Propiedades de un producto
+    // Propiedades de un producto.
     let descuento = producto.discount;
     let precioVenta = (producto.price + 0).toFixed(2);
     let precioAnterior = (precioVenta / ((100 - descuento)/100)).toFixed(2);
+
+    // Imagen placeholder en caso de no tener imagen.
+    let urlImagen = producto.url_image;
+    if (!urlImagen || urlImagen === null) {
+      urlImagen = "./imagen_no_disponible.png";
+    }
+
     // Escribir propiedades del producto en el nuevo card.
     cardProducto.querySelector("[name='name']").innerHTML = producto.name;
     cardProducto.querySelector("[name='price']").innerHTML = "$ " + precioVenta;
     cardProducto.querySelector("[name='discount']").innerHTML = descuento + "% de descuento";
     cardProducto.querySelector("[name='prev_price']").innerHTML = "$ " + precioAnterior;
-    cardProducto.querySelector("[name='url_image']").src = producto.url_image;
+    cardProducto.querySelector("[name='url_image']").src = urlImagen;
 
     // Agregar card al contenedor.
     contenedorProductos.appendChild(cardProducto);
