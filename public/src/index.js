@@ -46,7 +46,7 @@ document.addEventListener("DOMContentLoaded", async (e) => {
     dropdownCategorias.appendChild(linkCategoria);
   }
 
-  await actualizarEstado();
+  await actualizarEstado({});
 });
 
 /**
