@@ -30,25 +30,12 @@
         
         <div class="collapse navbar-collapse" id="navbarCollapse">
           <ul class="navbar-nav me-auto mb-2 mb-lg-0">
-            <!-- Inicio -->
-            <li class="nav-item">
-              <a class="nav-link" aria-current="page" href="#">Inicio</a>
-            </li>
-
             <!-- Categorias -->
-            <!-- TODO: Cargar categorias desde la base de datos. -->
             <li class="nav-item dropdown">
               <a class="nav-link dropdown-toggle" href="#" id="dropdownCategorias" role="button" data-bs-toggle="dropdown" aria-expanded="false">
                 Categorías
               </a>
-              <ul class="dropdown-menu py-1" aria-labelledby="dropdownCategorias">
-                <li><a class="dropdown-item small py-1" href="#">Snacks</a></li>
-                <li><a class="dropdown-item small py-1" href="#">Bebidas</a></li>
-                <li><a class="dropdown-item small py-1" href="#">Dulces</a></li>
-                <li><a class="dropdown-item small py-1" href="#">Jugos</a></li>
-                <li><a class="dropdown-item small py-1" href="#">Energeticas</a></li>
-                <li><a class="dropdown-item small py-1" href="#">Alcohol</a></li>
-                <li><a class="dropdown-item small py-1" href="#">Helados</a></li>
+              <ul class="dropdown-menu py-1" aria-labelledby="dropdownCategorias" id="dropdown_categories">
               </ul>
             </li>
           </ul>
@@ -127,10 +114,16 @@
 
   <!-- Plantilla para el link de cada pagina -->
   <template id="page_link_template">
-    <li class="page-item"><a class="page-link" link="X" href="#" onclick="buscarProductos(this.link)">X</a></li>
+    <li class="page-item"><a class="page-link" link="X" href="#">N° Pagina</a></li>
   </template>
 
-  <script src="/src/api.js"></script>
-  <script src="/src/index.js"></script>
+  <!-- Plantilla para el link de cada categoria -->
+  <template id="category_link_template">
+    <li><a class="dropdown-item small py-1" href="#">Snacks</a></li>
+  </template>
+
+  <!-- Scripts -->
+  <script src="./src/api.js"></script>
+  <script src="./src/index.js"></script>
 </body>
 </html>
