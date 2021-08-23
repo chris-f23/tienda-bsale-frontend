@@ -29,24 +29,28 @@ let App = {
 
 /**
  * Al cargar la pagina:
- * - Obtiene todas las categorias y cargarlas en el dropdown de categorias.
+ * - Obtiene todas las categorias y cargarlas en el dropdown de categorias. Esto ocurre solo una vez.
  * - Usando el estado inicial, obtiene los productos desde el backend y crear un card por cada producto.
  */
 document.addEventListener("DOMContentLoaded", async (e) => {
-  const categorias = await obtenerCategorias();
-  let linkCategoriaTodos = PLANTILLA_LINK_CATEGORIA.cloneNode(true).content;
-  linkCategoriaTodos.querySelector("a").innerHTML = "Todos";
-  linkCategoriaTodos.querySelector("a").setAttribute('onclick', `actualizarEstado({ categoria: 'todos' })`)
-  dropdownCategorias.appendChild(linkCategoriaTodos);
+  try {
+    const categorias = await obtenerCategorias();
+    let linkCategoriaTodos = PLANTILLA_LINK_CATEGORIA.cloneNode(true).content;
+    linkCategoriaTodos.querySelector("a").innerHTML = "Todos";
+    linkCategoriaTodos.querySelector("a").setAttribute('onclick', `actualizarEstado({ categoria: 'todos' })`)
+    dropdownCategorias.appendChild(linkCategoriaTodos);
+  
+    for (const categoria of categorias.rows) {
+      let linkCategoria = PLANTILLA_LINK_CATEGORIA.cloneNode(true).content;
+      linkCategoria.querySelector("a").innerHTML = categoria.name;
+      linkCategoria.querySelector("a").setAttribute('onclick', `actualizarEstado({ categoria: '${categoria.name}' })`)
+      dropdownCategorias.appendChild(linkCategoria);
+    }
 
-  for (const categoria of categorias.rows) {
-    let linkCategoria = PLANTILLA_LINK_CATEGORIA.cloneNode(true).content;
-    linkCategoria.querySelector("a").innerHTML = categoria.name;
-    linkCategoria.querySelector("a").setAttribute('onclick', `actualizarEstado({ categoria: '${categoria.name}' })`)
-    dropdownCategorias.appendChild(linkCategoria);
+    await actualizarEstado({});
+  } catch (error) {
+    actualizarPaginaCasoError(error);
   }
-
-  await actualizarEstado({});
 });
 
 /**
@@ -99,17 +103,31 @@ async function actualizarEstado({
   }
   App.pagination.results_per_page = (resultadosPorPagina) ? resultadosPorPagina : selectCantProductos.value;
   App.search = (busqueda) ? busqueda : inputBusqueda.value;
-  
-  const productos = await obtenerProductos({
-    cantidad: App.pagination.results_per_page,
-    pagina: App.pagination.current_page,
-    busqueda: App.search,
-    categoria: App.category
-  });
 
-  actualizarTituloPagina();
-  renderizarProductos(productos.rows);
-  actualizarPaginacion(productos.count);
+  // Si existe un problema al obtener los productos, mostrar aviso.
+  try {
+    const productos = await obtenerProductos({
+      cantidad: App.pagination.results_per_page,
+      pagina: App.pagination.current_page,
+      busqueda: App.search,
+      categoria: App.category
+    });
+
+    actualizarTituloPagina();
+    renderizarProductos(productos.rows);
+    actualizarPaginacion(productos.count);
+  } catch (error) {
+    actualizarPaginaCasoError(error);
+  }
+}
+
+async function actualizarPaginaCasoError(error) {
+  console.error("Ocurrió un error al intentar obtener los productos...", error);
+  renderizarProductos([]);
+  actualizarPaginacion(0);
+
+  document.getElementById('page_title').innerHTML = "Ha ocurrido un problema..."
+  document.getElementById('results_for').innerHTML = "No se puede obtener el catálogo en estos momentos, inténtelo más tarde.";
 }
 
 /**
