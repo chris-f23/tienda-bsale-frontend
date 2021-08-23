@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", async (e) => {
   const categorias = await obtenerCategorias();
   let linkCategoriaTodos = PLANTILLA_LINK_CATEGORIA.cloneNode(true).content;
   linkCategoriaTodos.querySelector("a").innerHTML = "Todos";
-  linkCategoriaTodos.querySelector("a").setAttribute('onclick', `actualizarEstado({ categoria: null})`)
+  linkCategoriaTodos.querySelector("a").setAttribute('onclick', `actualizarEstado({ categoria: 'todos' })`)
   dropdownCategorias.appendChild(linkCategoriaTodos);
 
   for (const categoria of categorias.rows) {
@@ -55,7 +55,7 @@ document.addEventListener("DOMContentLoaded", async (e) => {
  */
 document.getElementById("search_form").addEventListener('submit', async (e) => {
   e.preventDefault();
-  await actualizarEstado({});
+  await actualizarEstado({ busqueda: inputBusqueda.value });
 });
 
 inputBusqueda.addEventListener('input', async (e) => {
@@ -90,18 +90,15 @@ async function actualizarEstado({
   paginaActual,
   categoria,
   resultadosPorPagina,
+  busqueda
 }) {
   App.pagination.current_page = (paginaActual && paginaActual != null) ? paginaActual : 1;
 
-  if (categoria !== undefined) {
-    if (categoria === '') {
-      App.category = undefined;
-    } else {
-      App.category = categoria;
-    }
+  if (categoria) {
+    App.category = (categoria !== "todos") ? categoria : undefined;
   }
-  App.pagination.results_per_page = (resultadosPorPagina && resultadosPorPagina != null) ? resultadosPorPagina : 6;
-  App.search = inputBusqueda.value;
+  App.pagination.results_per_page = (resultadosPorPagina) ? resultadosPorPagina : selectCantProductos.value;
+  App.search = (busqueda) ? busqueda : inputBusqueda.value;
   
   const productos = await obtenerProductos({
     cantidad: App.pagination.results_per_page,
@@ -176,21 +173,25 @@ function actualizarPaginacion(cantidadTotalProductos) {
   // Mostrar siempre 5 links.
   // los numeros de las paginas cambian dependiendo de la pagina actual.
   let offsetInicio = 0;
-  if (App.pagination.current_page > 3) {
-    offsetInicio = App.pagination.current_page - 3;
+  if (cantPaginas > 5) {
+    if (App.pagination.current_page > 3) {
+      offsetInicio = App.pagination.current_page - 3;
 
-    // Atajo a la primera pagina. Solo se crea si el link a la primera pagina no es visible.
-    let linkPagina = PLANTILLA_LINK_PAGINACION.cloneNode(true).content;
-    linkPagina.querySelector("a").innerHTML = `&laquo ${1}`;
-    linkPagina.querySelector("a").setAttribute('onclick', `actualizarEstado({ paginaActual: 1 })`)
-    contenedorLinkPaginas.appendChild(linkPagina);
+      // Atajo a la primera pagina. Solo se crea si el link a la primera pagina no es visible.
+      let linkPagina = PLANTILLA_LINK_PAGINACION.cloneNode(true).content;
+      linkPagina.querySelector("a").innerHTML = `&laquo ${1}`;
+      linkPagina.querySelector("a").setAttribute('onclick', `actualizarEstado({ paginaActual: 1 })`)
+      contenedorLinkPaginas.appendChild(linkPagina);
+    }
+    if (App.pagination.current_page > cantPaginas - 2) {
+      offsetInicio = cantPaginas - 5;
+    }
   }
-  if (App.pagination.current_page > cantPaginas - 2) {
-    offsetInicio = cantPaginas - 5;
-  }
+  
+  let cantLinks = (cantPaginas <= 5) ? cantPaginas : 5;
 
   // Links de las paginas intermedias.
-  for (let index = 1; index <= 5; index++) {
+  for (let index = 1; index <= cantLinks; index++) {
     let linkPagina = PLANTILLA_LINK_PAGINACION.cloneNode(true).content;
     linkPagina.querySelector("a").innerHTML = index + offsetInicio;
     linkPagina.querySelector("a").setAttribute('onclick', `actualizarEstado({ paginaActual: ${index + offsetInicio} })`)
@@ -204,7 +205,7 @@ function actualizarPaginacion(cantidadTotalProductos) {
   }
 
   // Atajo a la ultima pagina. Solo se crea si el link a la ultima pagina no es visible.
-  if (App.pagination.current_page < cantPaginas - 2) {
+  if (cantPaginas > 5 && App.pagination.current_page < cantPaginas - 2) {
     let linkPagina = PLANTILLA_LINK_PAGINACION.cloneNode(true).content;
     linkPagina.querySelector("a").innerHTML = `${cantPaginas} &raquo`;
     linkPagina.querySelector("a").setAttribute('onclick', `actualizarEstado({ paginaActual: ${cantPaginas})`)
