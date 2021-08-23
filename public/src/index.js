@@ -165,13 +165,13 @@ function actualizarPaginacion(cantidadTotalProductos) {
   // Eliminar links antiguos.
   while (contenedorLinkPaginas.firstChild) contenedorLinkPaginas.removeChild(contenedorLinkPaginas.firstChild);
 
-  // Si no existen productos, no mostrar links.
-  if (cantidadTotalProductos === 0) {
-    return;
-  }
-
   // Crear links nuevos.
   let cantPaginas = Math.ceil(App.pagination.total_results/App.pagination.results_per_page);
+
+  // Si no existen productos, no mostrar links.
+  if (cantPaginas === 1) {
+    return;
+  }
 
   // Mostrar siempre 5 links.
   // los numeros de las paginas cambian dependiendo de la pagina actual.
