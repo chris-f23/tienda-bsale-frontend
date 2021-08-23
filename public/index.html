@@ -53,7 +53,8 @@
     <main>
       <div class="container-fluid">
         
-        <h2>Inicio</h2>
+        <h2 class="text-capitalize" id="page_title">Inicio</h2>
+        <p class="text-muted h5" id="results_for"><span class="text-primary"></span></p>
         <hr>
         <!-- Contenedor de productos -->
         <div class="row row-cols-1 row-cols-sm-2 row-cols-md-3 row-cols-lg-5 g-4 align-items-end" id="products_container">
@@ -64,7 +65,7 @@
         <!-- Cantidad de productos por pagina -->
         <div class="d-flex mt-4 flex-row justify-content-end">
           <p>Productos por página: </p>
-          <select class="form-select form-select-sm ms-2 py-0" style="width: 10vh; height: 28px;" id="select_cant_products">
+          <select class="form-select form-select-sm ms-2 py-0" style="width: 12vh; height: 28px;" id="select_cant_products">
             <option selected value="6">6</option>
             <option value="8">8</option>
             <option value="12">12</option>
@@ -119,7 +120,7 @@
 
   <!-- Plantilla para el link de cada categoria -->
   <template id="category_link_template">
-    <li><a class="dropdown-item small py-1" href="#">Snacks</a></li>
+    <li><a class="dropdown-item small py-1 text-capitalize" href="#">Snacks</a></li>
   </template>
 
   <!-- Scripts -->

@@ -36,7 +36,7 @@ document.addEventListener("DOMContentLoaded", async (e) => {
   const categorias = await obtenerCategorias();
   let linkCategoriaTodos = PLANTILLA_LINK_CATEGORIA.cloneNode(true).content;
   linkCategoriaTodos.querySelector("a").innerHTML = "Todos";
-  linkCategoriaTodos.querySelector("a").setAttribute('onclick', `actualizarEstado({})`)
+  linkCategoriaTodos.querySelector("a").setAttribute('onclick', `actualizarEstado({ categoria: null})`)
   dropdownCategorias.appendChild(linkCategoriaTodos);
 
   for (const categoria of categorias.rows) {
@@ -55,10 +55,13 @@ document.addEventListener("DOMContentLoaded", async (e) => {
  */
 document.getElementById("search_form").addEventListener('submit', async (e) => {
   e.preventDefault();
-  if (inputBusqueda.value && inputBusqueda.value.length > 0) {
-    actualizarEstado({ busqueda: inputBusqueda.value });
-  }
+  await actualizarEstado({});
+});
 
+inputBusqueda.addEventListener('input', async (e) => {
+  if (!inputBusqueda.value) {
+    await actualizarEstado({});
+  }
 });
 
 /**
@@ -87,12 +90,18 @@ async function actualizarEstado({
   paginaActual,
   categoria,
   resultadosPorPagina,
-  busqueda
 }) {
   App.pagination.current_page = (paginaActual && paginaActual != null) ? paginaActual : 1;
-  App.category = (categoria && categoria != null) ? categoria : undefined;
+
+  if (categoria !== undefined) {
+    if (categoria === '') {
+      App.category = undefined;
+    } else {
+      App.category = categoria;
+    }
+  }
   App.pagination.results_per_page = (resultadosPorPagina && resultadosPorPagina != null) ? resultadosPorPagina : 6;
-  App.search = busqueda;
+  App.search = inputBusqueda.value;
   
   const productos = await obtenerProductos({
     cantidad: App.pagination.results_per_page,
@@ -101,6 +110,7 @@ async function actualizarEstado({
     categoria: App.category
   });
 
+  actualizarTituloPagina();
   renderizarProductos(productos.rows);
   actualizarPaginacion(productos.count);
 }
@@ -118,7 +128,6 @@ function renderizarProductos(productos) {
     let cardProducto = PLANTILLA_PRODUCTO.cloneNode(true).content;
 
     // Propiedades de un producto.
-
     let descuento = producto.discount;
     let precioVenta = (producto.price + 0).toFixed(2);
     let precioAnterior = (precioVenta / ((100 - descuento)/100)).toFixed(2);
@@ -155,6 +164,11 @@ function actualizarPaginacion(cantidadTotalProductos) {
 
   // Eliminar links antiguos.
   while (contenedorLinkPaginas.firstChild) contenedorLinkPaginas.removeChild(contenedorLinkPaginas.firstChild);
+
+  // Si no existen productos, no mostrar links.
+  if (cantidadTotalProductos === 0) {
+    return;
+  }
 
   // Crear links nuevos.
   let cantPaginas = Math.ceil(App.pagination.total_results/App.pagination.results_per_page);
@@ -195,6 +209,33 @@ function actualizarPaginacion(cantidadTotalProductos) {
     linkPagina.querySelector("a").innerHTML = `${cantPaginas} &raquo`;
     linkPagina.querySelector("a").setAttribute('onclick', `actualizarEstado({ paginaActual: ${cantPaginas})`)
     contenedorLinkPaginas.appendChild(linkPagina);
+  }
+}
+
+function actualizarTituloPagina() {
+  let tituloPagina = document.getElementById('page_title');
+  let tituloResultadosPara = document.getElementById('results_for');
+
+  if (App.category && App.category != null) {
+    tituloPagina.innerHTML = "Categoria: " + App.category;
+  } else {
+    tituloPagina.innerHTML = "Inicio";
+  }
+
+  // Eliminar "Resultados para..."
+  if (tituloResultadosPara.children.length > 0) {
+    tituloResultadosPara.firstChild.remove();
+    tituloResultadosPara.innerHTML = null;
+  }
+
+  // Escribir "Resultados para..." solo si existe texto que buscar.
+  if (App.search && App.search != null) {
+    tituloResultadosPara.innerHTML = "Resultados para ";
+    let textoBusqueda = document.createElement("text-primary");
+    textoBusqueda.className = "text-primary";
+    textoBusqueda.innerHTML = `"${App.search}"`;
+
+    tituloResultadosPara.appendChild(textoBusqueda);
   }
 }
 
